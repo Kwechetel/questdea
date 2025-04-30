@@ -1,0 +1,16 @@
+{
+  "files": {
+    "main.css": "/questdea/static/css/main.e0a62cb7.css",
+    "main.js": "/questdea/static/js/main.9a8e23b2.js",
+    "static/js/453.14edcf01.chunk.js": "/questdea/static/js/453.14edcf01.chunk.js",
+    "static/media/shop.png": "/questdea/static/media/shop.91747d9e59e2277b12d1.png",
+    "index.html": "/questdea/index.html",
+    "main.e0a62cb7.css.map": "/questdea/static/css/main.e0a62cb7.css.map",
+    "main.9a8e23b2.js.map": "/questdea/static/js/main.9a8e23b2.js.map",
+    "453.14edcf01.chunk.js.map": "/questdea/static/js/453.14edcf01.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.e0a62cb7.css",
+    "static/js/main.9a8e23b2.js"
+  ]
+}
