@@ -215,7 +215,7 @@ const KnowledgeHub = () => {
   return (
     <Box>
       {/* Hero Section */}
-      <Box className="bg-gradient-to-r from-questdea-navy to-questdea-orange text-white py-12 md:py-20">
+      <Box className="bg-gradient-to-r from-lastte-navy to-lastte-orange text-white py-12 md:py-20">
         <Container maxWidth="lg">
           <Typography
             variant={isMobile ? "h3" : "h2"}

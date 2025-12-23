@@ -1,0 +1,186 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  ADMIN
+  CLIENT
+}
+
+enum LeadStatus {
+  NEW
+  CONTACTED
+  WON
+  LOST
+}
+
+model User {
+  id           String   @id @default(cuid())
+  name         String
+  email        String   @unique
+  passwordHash String
+  role         Role     @default(CLIENT)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  // Relations
+  client Client?
+
+  @@map("users")
+}
+
+model Lead {
+  id        String     @id @default(cuid())
+  name      String
+  email     String
+  phone     String?
+  business  String?
+  budget    String?
+  message   String?
+  status    LeadStatus @default(NEW)
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+
+  @@map("leads")
+}
+
+model Client {
+  id          String   @id @default(cuid())
+  userId      String   @unique
+  companyName String
+  phone       String?
+  createdAt   DateTime @default(now())
+
+  // Relations
+  user    User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  projects Project[]
+
+  @@map("clients")
+}
+
+model Project {
+  id          String   @id @default(cuid())
+  clientId    String
+  title       String
+  status      String
+  description String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  client Client @relation(fields: [clientId], references: [id], onDelete: Cascade)
+
+  @@map("projects")
+}
+
+model CaseStudy {
+  id            String   @id @default(cuid())
+  title         String
+  slug          String   @unique
+  summary       String
+  stack         String
+  coverImageUrl String?
+  body          String   @db.Text
+  published     Boolean  @default(false)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@map("case_studies")
+}
+
+model Insight {
+  id          String   @id @default(cuid())
+  title       String
+  slug        String   @unique
+  description String   @db.Text
+  category    String
+  readTime    String
+  author      String   @default("LASTTE Team")
+  tags        String[] // Array of tags
+  featured    Boolean  @default(false)
+  body        String?  @db.Text // Full article content (optional for now)
+  published   Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("insights")
+}
+
+model TeamMember {
+  id          String   @id @default(cuid())
+  name        String
+  role        String
+  image       String?
+  description String   @db.Text
+  facebookUrl String?
+  linkedinUrl String?
+  order       Int      @default(0) // For ordering team members
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("team_members")
+}
+
+enum MessageDirection {
+  INCOMING
+  OUTGOING
+}
+
+enum MessageStatus {
+  SENT
+  DELIVERED
+  READ
+  FAILED
+}
+
+enum MessageType {
+  TEXT
+  IMAGE
+  DOCUMENT
+  AUDIO
+  VIDEO
+}
+
+model WhatsAppMessage {
+  id          String          @id @default(cuid())
+  messageId   String          @unique // WhatsApp message ID
+  from        String          // Client's phone number
+  to          String          // Business phone number
+  text        String?         @db.Text
+  type        MessageType     @default(TEXT)
+  direction   MessageDirection
+  status      MessageStatus?  // For outgoing messages
+  mediaUrl    String?         // For media messages
+  timestamp   DateTime        @default(now()) // WhatsApp timestamp
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
+
+  @@index([from])
+  @@index([timestamp])
+  @@map("whatsapp_messages")
+}
+
+model WhatsAppContact {
+  id          String   @id @default(cuid())
+  phoneNumber String   @unique // Phone number in international format
+  name        String   // Contact name
+  email       String?  // Optional email
+  notes       String?  @db.Text // Optional notes
+  isPinned    Boolean  @default(false) // Pin conversation to top
+  lastReadAt  DateTime? // Last time messages were read
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([phoneNumber])
+  @@index([isPinned])
+  @@map("whatsapp_contacts")
+}
+

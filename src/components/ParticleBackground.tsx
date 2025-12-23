@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useEffect, useRef, useState } from "react";
 
 interface Particle {
@@ -8,6 +10,9 @@ interface Particle {
   radius: number;
   baseRadius: number;
   opacity: number;
+  baseOpacity: number;
+  twinkle: number;
+  twinkleSpeed: number;
   fact?: string;
   category?: string;
 }
@@ -602,9 +607,11 @@ const ParticleBackground: React.FC<ParticleBackgroundProps> = ({
 
       for (let i = 0; i < particleCount; i++) {
         const fact = facts[Math.floor(Math.random() * facts.length)];
+        // Night sky stars: smaller and more varied sizes (like real stars)
         const baseRadius = fullView
-          ? Math.random() * 7 + 5
-          : Math.random() * 4 + 3;
+          ? Math.random() * 2 + 1.5 // 1.5-3.5px for full view
+          : Math.random() * 1.5 + 1; // 1-2.5px for normal view
+        const baseOpacity = fullView ? 0.8 : 0.7; // Brighter for night sky effect
         particles.current.push({
           x: Math.random() * canvas.width,
           y: Math.random() * canvas.height,
@@ -612,7 +619,10 @@ const ParticleBackground: React.FC<ParticleBackgroundProps> = ({
           dy: (Math.random() - 0.5) * (fullView ? 0.4 : 1.5),
           radius: baseRadius,
           baseRadius: baseRadius,
-          opacity: fullView ? 0.7 : 0.6,
+          opacity: baseOpacity,
+          baseOpacity: baseOpacity,
+          twinkle: Math.random() * Math.PI * 2, // Random starting phase for twinkle
+          twinkleSpeed: 0.02 + Math.random() * 0.03, // Varying twinkle speeds
           fact: fact.fact,
           category: fact.category,
         });
@@ -623,20 +633,153 @@ const ParticleBackground: React.FC<ParticleBackgroundProps> = ({
       ctx: CanvasRenderingContext2D,
       particle: Particle
     ) => {
-      ctx.beginPath();
-      ctx.arc(particle.x, particle.y, particle.radius, 0, Math.PI * 2);
+      // Save context state
+      ctx.save();
 
-      // Use category colors in fullView mode, white otherwise
+      // Determine star color - white/amber for night sky effect
+      let starColor: string;
+      let glowColor: string;
+
       if (fullView && particle.category) {
-        const color = categoryColors[particle.category as CategoryType];
-        ctx.fillStyle = `${color}${Math.floor(particle.opacity * 255)
-          .toString(16)
-          .padStart(2, "0")}`;
+        // In full view, use category colors but with star-like glow
+        starColor = categoryColors[particle.category as CategoryType];
+        glowColor = starColor;
       } else {
-        ctx.fillStyle = `rgba(255, 255, 255, ${particle.opacity})`;
+        // Night sky stars: white to amber gradient
+        starColor = `rgba(255, 255, 255, ${particle.opacity})`;
+        glowColor = `rgba(255, 213, 128, ${particle.opacity * 0.8})`;
       }
 
+      // Draw outer glow (larger, more transparent)
+      const glowRadius = particle.radius * 3;
+      const gradient = ctx.createRadialGradient(
+        particle.x,
+        particle.y,
+        0,
+        particle.x,
+        particle.y,
+        glowRadius
+      );
+
+      if (fullView && particle.category && starColor) {
+        // Ensure starColor is a hex color and convert opacity to hex
+        const hexColor = starColor.startsWith("#")
+          ? starColor
+          : `#${starColor}`;
+        const opacityHex60 = Math.floor(particle.opacity * 0.6 * 255)
+          .toString(16)
+          .padStart(2, "0");
+        const opacityHex30 = Math.floor(particle.opacity * 0.3 * 255)
+          .toString(16)
+          .padStart(2, "0");
+
+        gradient.addColorStop(0, `${hexColor}${opacityHex60}`);
+        gradient.addColorStop(0.3, `${hexColor}${opacityHex30}`);
+        gradient.addColorStop(1, `${hexColor}00`);
+      } else {
+        gradient.addColorStop(
+          0,
+          `rgba(255, 255, 255, ${particle.opacity * 0.4})`
+        );
+        gradient.addColorStop(
+          0.3,
+          `rgba(255, 213, 128, ${particle.opacity * 0.2})`
+        );
+        gradient.addColorStop(1, "rgba(255, 213, 128, 0)");
+      }
+
+      ctx.fillStyle = gradient;
+      ctx.beginPath();
+      ctx.arc(particle.x, particle.y, glowRadius, 0, Math.PI * 2);
       ctx.fill();
+
+      // Draw middle glow (medium size)
+      const middleGlowRadius = particle.radius * 1.8;
+      const middleGradient = ctx.createRadialGradient(
+        particle.x,
+        particle.y,
+        0,
+        particle.x,
+        particle.y,
+        middleGlowRadius
+      );
+
+      if (fullView && particle.category && starColor) {
+        // Ensure starColor is a hex color and convert opacity to hex
+        const hexColor = starColor.startsWith("#")
+          ? starColor
+          : `#${starColor}`;
+        const opacityHex80 = Math.floor(particle.opacity * 0.8 * 255)
+          .toString(16)
+          .padStart(2, "0");
+        const opacityHex40 = Math.floor(particle.opacity * 0.4 * 255)
+          .toString(16)
+          .padStart(2, "0");
+
+        middleGradient.addColorStop(0, `${hexColor}${opacityHex80}`);
+        middleGradient.addColorStop(0.5, `${hexColor}${opacityHex40}`);
+        middleGradient.addColorStop(1, `${hexColor}00`);
+      } else {
+        middleGradient.addColorStop(
+          0,
+          `rgba(255, 255, 255, ${particle.opacity * 0.6})`
+        );
+        middleGradient.addColorStop(
+          0.5,
+          `rgba(255, 213, 128, ${particle.opacity * 0.3})`
+        );
+        middleGradient.addColorStop(1, "rgba(255, 213, 128, 0)");
+      }
+
+      ctx.fillStyle = middleGradient;
+      ctx.beginPath();
+      ctx.arc(particle.x, particle.y, middleGlowRadius, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Draw the bright star core (small, bright point)
+      const coreGradient = ctx.createRadialGradient(
+        particle.x,
+        particle.y,
+        0,
+        particle.x,
+        particle.y,
+        particle.radius
+      );
+
+      if (fullView && particle.category && starColor) {
+        // Ensure starColor is a hex color and convert opacity to hex
+        const hexColor = starColor.startsWith("#")
+          ? starColor
+          : `#${starColor}`;
+        const opacityHex = Math.floor(particle.opacity * 255)
+          .toString(16)
+          .padStart(2, "0");
+        const opacityHex70 = Math.floor(particle.opacity * 0.7 * 255)
+          .toString(16)
+          .padStart(2, "0");
+
+        coreGradient.addColorStop(0, `${hexColor}${opacityHex}`);
+        coreGradient.addColorStop(0.7, `${hexColor}${opacityHex70}`);
+        coreGradient.addColorStop(1, `${hexColor}00`);
+      } else {
+        coreGradient.addColorStop(
+          0,
+          `rgba(255, 255, 255, ${particle.opacity})`
+        );
+        coreGradient.addColorStop(
+          0.5,
+          `rgba(255, 255, 255, ${particle.opacity * 0.8})`
+        );
+        coreGradient.addColorStop(1, `rgba(255, 213, 128, 0)`);
+      }
+
+      ctx.fillStyle = coreGradient;
+      ctx.beginPath();
+      ctx.arc(particle.x, particle.y, particle.radius, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Restore context state
+      ctx.restore();
 
       if (particle === selectedParticle) {
         const targetRadius = fullView ? 200 : 150;
@@ -655,53 +798,6 @@ const ParticleBackground: React.FC<ParticleBackgroundProps> = ({
           : `rgba(255, 255, 255, ${particle.opacity})`;
         ctx.lineWidth = 3;
         ctx.stroke();
-
-        if (particle.fact) {
-          // Add "Did you know?" text
-          ctx.font = "bold 24px Arial";
-          ctx.fillStyle = "#ffffff";
-          ctx.textAlign = "center";
-          ctx.fillText("Did you know?", particle.x, particle.y - 100);
-
-          // Draw fact text with background
-          ctx.font = "20px Arial";
-          const lines = particle.fact.split("\n");
-          const lineHeight = 32;
-          const padding = 20;
-          const startY = particle.y - 50;
-
-          // Calculate text dimensions
-          const maxWidth = Math.max(
-            ...lines.map((line) => ctx.measureText(line).width)
-          );
-          const totalHeight = lines.length * lineHeight;
-
-          // Draw semi-transparent background
-          ctx.fillStyle = "rgba(0, 0, 0, 0.8)";
-          ctx.fillRect(
-            particle.x - maxWidth / 2 - padding,
-            startY - lineHeight / 2,
-            maxWidth + padding * 2,
-            totalHeight + padding * 2
-          );
-
-          // Draw fact text
-          ctx.fillStyle = "#ffffff";
-          lines.forEach((line, index) => {
-            ctx.fillText(line, particle.x, startY + index * lineHeight);
-          });
-
-          // Draw category
-          if (particle.category) {
-            ctx.font = "bold 18px Arial";
-            ctx.fillStyle = categoryColors[particle.category as CategoryType];
-            ctx.fillText(
-              particle.category,
-              particle.x,
-              startY + lines.length * lineHeight + 15
-            );
-          }
-        }
       }
     };
 
@@ -751,55 +847,82 @@ const ParticleBackground: React.FC<ParticleBackgroundProps> = ({
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
       particles.current.forEach((particle, i) => {
+        // Update twinkle effect - more pronounced for night sky stars
+        particle.twinkle += particle.twinkleSpeed;
+        const twinkleFactor = (Math.sin(particle.twinkle) + 1) / 2; // 0 to 1
+        const twinkleVariation = 0.3; // How much the opacity varies (30% for more visible twinkling)
+
         // Mouse interaction
         const dx = mousePosition.current.x - particle.x;
         const dy = mousePosition.current.y - particle.y;
         const distance = Math.sqrt(dx * dx + dy * dy);
 
+        // Handle particle appearance
         if (distance < 300 && !fullView) {
           const angle = Math.atan2(dy, dx);
           const force = (300 - distance) / 300;
 
           if (isHovering.current) {
             particle.radius = particle.baseRadius * (1 - force * 0.5);
-            particle.opacity = 0.5 + force * 0.5;
+            const baseOpacity = 0.5 + force * 0.5;
+            particle.opacity =
+              baseOpacity + (twinkleFactor - 0.5) * twinkleVariation;
             const repulsionForce = force * 6;
             particle.x -= Math.cos(angle) * repulsionForce;
             particle.y -= Math.sin(angle) * repulsionForce;
-            const movementSpeed = 0.5;
-            particle.x += particle.dx * movementSpeed;
-            particle.y += particle.dy * movementSpeed;
           } else {
             particle.radius = particle.baseRadius;
-            particle.opacity = 0.6;
+            const baseOpacity = particle.baseOpacity;
+            particle.opacity =
+              baseOpacity + (twinkleFactor - 0.5) * twinkleVariation;
             const repulsionForce = force * 4;
             particle.x -= Math.cos(angle) * repulsionForce;
             particle.y -= Math.sin(angle) * repulsionForce;
-            const movementSpeed = 1;
-            particle.x += particle.dx * movementSpeed;
-            particle.y += particle.dy * movementSpeed;
           }
         } else {
-          particle.radius = particle.baseRadius;
-          particle.opacity = fullView ? 0.7 : 0.6;
-
-          if (fullView) {
-            // Smoother movement in fullView mode
-            const movementSpeed = 1.0; // Slightly reduced from 1.2 for smoother motion
-            // Add smoother random variation
-            particle.dx += (Math.random() - 0.5) * 0.04; // Reduced from 0.08 for less flickering
-            particle.dy += (Math.random() - 0.5) * 0.04; // Reduced from 0.08 for less flickering
-            // Keep velocity within smoother bounds
-            particle.dx = Math.max(Math.min(particle.dx, 1.0), -1.0); // Reduced from 1.2 for smoother motion
-            particle.dy = Math.max(Math.min(particle.dy, 1.0), -1.0); // Reduced from 1.2 for smoother motion
-            // Apply movement with smoother transitions
-            particle.x += particle.dx * movementSpeed;
-            particle.y += particle.dy * movementSpeed;
+          // Add hover effect for full view mode
+          if (fullView && distance < 50) {
+            const hoverForce = (50 - distance) / 50;
+            particle.radius = particle.baseRadius * (1 + hoverForce * 1.5);
+            const baseOpacity = 0.7 + hoverForce * 0.3;
+            particle.opacity =
+              baseOpacity + (twinkleFactor - 0.5) * twinkleVariation;
           } else {
-            const movementSpeed = 1.2;
-            particle.x += particle.dx * movementSpeed;
-            particle.y += particle.dy * movementSpeed;
+            particle.radius = particle.baseRadius;
+            const baseOpacity = particle.baseOpacity;
+            particle.opacity =
+              baseOpacity + (twinkleFactor - 0.5) * twinkleVariation;
           }
+        }
+
+        // Handle particle movement
+        if (fullView) {
+          // Update velocity with random variation
+          const randomX = (Math.random() - 0.5) * 0.06;
+          const randomY = (Math.random() - 0.5) * 0.06;
+
+          // Update velocity with momentum
+          particle.dx = particle.dx * 0.99 + randomX;
+          particle.dy = particle.dy * 0.99 + randomY;
+
+          // Keep velocity within bounds
+          const maxSpeed = 1.5;
+          const speed = Math.sqrt(
+            particle.dx * particle.dx + particle.dy * particle.dy
+          );
+          if (speed > maxSpeed) {
+            const ratio = maxSpeed / speed;
+            particle.dx *= ratio;
+            particle.dy *= ratio;
+          }
+
+          // Apply movement
+          particle.x += particle.dx;
+          particle.y += particle.dy;
+        } else {
+          const movementSpeed = 1.2;
+          particle.x += particle.dx * movementSpeed;
+          particle.y += particle.dy * movementSpeed;
         }
 
         // Bounce off edges

@@ -4,265 +4,23 @@ import {
   Typography,
   Box,
   Grid,
-  Card,
-  CardContent,
-  CardMedia,
   useTheme,
   useMediaQuery,
-  Chip,
-  Avatar,
   Button,
 } from "@mui/material";
-import LightbulbIcon from "@mui/icons-material/Lightbulb";
-import SchoolIcon from "@mui/icons-material/School";
-import TrendingUpIcon from "@mui/icons-material/TrendingUp";
-import StarIcon from "@mui/icons-material/Star";
-import TimelineIcon from "@mui/icons-material/Timeline";
-import EmojiEventsIcon from "@mui/icons-material/EmojiEvents";
-import WorkspacePremiumIcon from "@mui/icons-material/WorkspacePremium";
-import PlayCircleIcon from "@mui/icons-material/PlayCircle";
-import OndemandVideoIcon from "@mui/icons-material/OndemandVideo";
-import SportsEsportsIcon from "@mui/icons-material/SportsEsports";
-import FitnessCenterIcon from "@mui/icons-material/FitnessCenter";
-import AppleIcon from "@mui/icons-material/Apple";
-import AndroidIcon from "@mui/icons-material/Android";
-import MenuBookIcon from "@mui/icons-material/MenuBook";
-import ArticleIcon from "@mui/icons-material/Article";
-import VideoLibraryIcon from "@mui/icons-material/VideoLibrary";
-import PodcastsIcon from "@mui/icons-material/Podcasts";
-import shopImage from "../assets/shop.png";
 import { Link as RouterLink } from "react-router-dom";
 import ParticleBackground from "../components/ParticleBackground";
+import PricingCard from "../components/PricingCard";
+import CategoryCard from "../components/CategoryCard";
+import HeroTerminal from "../components/HeroTerminal";
 
-// ============================================================================
-// Data
-// ============================================================================
-
-/**
- * Categories data for the Explore Categories section
- * Each category has a title, icon, and description
- */
-const categories = [
-  {
-    title: "Personal Growth",
-    icon: (
-      <TrendingUpIcon
-        fontSize="large"
-        sx={{ color: "#FF9900", transform: "scale(1.2)" }}
-      />
-    ),
-    description:
-      "Discover strategies for self-improvement and personal development.",
-    stats: "Join 5,000+ learners",
-    topics: ["Goal Setting", "Habit Formation", "Time Management"],
-    gradient: "from-orange-400 to-yellow-300",
-  },
-  {
-    title: "Digital Skills",
-    icon: (
-      <LightbulbIcon
-        fontSize="large"
-        sx={{ color: "#FF9900", transform: "scale(1.2)" }}
-      />
-    ),
-    description: "Learn essential digital skills for the modern world.",
-    stats: "20+ courses available",
-    topics: ["Web Development", "Digital Marketing", "Data Analytics"],
-    gradient: "from-yellow-400 to-orange-300",
-  },
-  {
-    title: "Leadership",
-    icon: (
-      <SchoolIcon
-        fontSize="large"
-        sx={{ color: "#FF9900", transform: "scale(1.2)" }}
-      />
-    ),
-    description: "Develop leadership qualities and management skills.",
-    stats: "Success stories: 1,000+",
-    topics: ["Team Management", "Strategic Thinking", "Communication"],
-    gradient: "from-orange-300 to-yellow-400",
-  },
-];
-
-/**
- * Featured articles data for the Featured Content section
- * Each article has an id, title, image, and description
- */
-const featuredArticles = [
-  {
-    id: 1,
-    title: "The Power of Habit Formation",
-    image: "/habit-formation.png",
-    description:
-      "Learn how to build and maintain positive habits that transform your life.",
-    readTime: "8 min read",
-    author: "Dr. Sarah Johnson",
-    tags: ["Psychology", "Self-Development", "Productivity"],
-  },
-  {
-    id: 4,
-    title: "AI and the Future of Work",
-    image: "/ai-future-work.png",
-    description:
-      "How artificial intelligence is reshaping the workplace and creating new opportunities.",
-    readTime: "10 min read",
-    author: "Tech Insights Team",
-    tags: ["Technology", "Career", "Innovation"],
-  },
-  {
-    id: 2,
-    title: "Digital Marketing Essentials",
-    image: "/digital-marketing.png",
-    description:
-      "Master the fundamentals of digital marketing in the modern age.",
-    readTime: "12 min read",
-    author: "Marketing Experts",
-    tags: ["Marketing", "Digital", "Business"],
-  },
-];
-
-const successStories = [
-  {
-    name: "Sarah Chen",
-    role: "Digital Marketing Specialist",
-    story:
-      "Transformed my career through QuestDea's digital marketing courses. Increased my company's ROI by 150%.",
-    image: "https://source.unsplash.com/random/100x100?portrait1",
-    rating: 5,
-    achievement: "Digital Marketing Certification",
-  },
-  {
-    name: "James Wilson",
-    role: "Tech Entrepreneur",
-    story:
-      "The leadership program gave me the confidence to start my own tech company. Now leading a team of 20.",
-    image: "https://source.unsplash.com/random/100x100?portrait2",
-    rating: 5,
-    achievement: "Leadership Excellence Award",
-  },
-  {
-    name: "Maria Rodriguez",
-    role: "Personal Development Coach",
-    story:
-      "QuestDea's resources helped me build my coaching practice from scratch. Now impacting hundreds of lives.",
-    image: "https://source.unsplash.com/random/100x100?portrait3",
-    rating: 5,
-    achievement: "Top Contributor 2023",
-  },
-];
-
-const learningPaths = [
-  {
-    title: "Digital Marketing Mastery",
-    duration: "12 weeks",
-    level: "Beginner to Advanced",
-    modules: 8,
-    skills: ["SEO", "Social Media", "Content Marketing", "Analytics"],
-    icon: <TimelineIcon sx={{ fontSize: 40, color: "#FF9900" }} />,
-    gradient: "from-blue-400 to-purple-500",
-  },
-  {
-    title: "Leadership Excellence",
-    duration: "10 weeks",
-    level: "Intermediate",
-    modules: 6,
-    skills: [
-      "Team Management",
-      "Strategic Planning",
-      "Communication",
-      "Decision Making",
-    ],
-    icon: <EmojiEventsIcon sx={{ fontSize: 40, color: "#FF9900" }} />,
-    gradient: "from-green-400 to-blue-500",
-  },
-  {
-    title: "Personal Growth Journey",
-    duration: "8 weeks",
-    level: "All Levels",
-    modules: 5,
-    skills: ["Goal Setting", "Time Management", "Mindfulness", "Productivity"],
-    icon: <WorkspacePremiumIcon sx={{ fontSize: 40, color: "#FF9900" }} />,
-    gradient: "from-purple-400 to-pink-500",
-  },
-];
-
-const streamCategories = [
-  {
-    title: "Coaching & Mentorship",
-    icon: <SchoolIcon sx={{ fontSize: 40, color: "#FF9900" }} />,
-    description:
-      "Expert guidance and personal development tips from top coaches",
-    videos: 200,
-    gradient: "from-blue-500 to-purple-500",
-  },
-  {
-    title: "Educational Content",
-    icon: <OndemandVideoIcon sx={{ fontSize: 40, color: "#FF9900" }} />,
-    description:
-      "Learn new skills and expand your knowledge through bite-sized videos",
-    videos: 350,
-    gradient: "from-purple-500 to-pink-500",
-  },
-  {
-    title: "Entertainment",
-    icon: <SportsEsportsIcon sx={{ fontSize: 40, color: "#FF9900" }} />,
-    description: "Fun and engaging content to brighten your day",
-    videos: 150,
-    gradient: "from-pink-500 to-red-500",
-  },
-  {
-    title: "Fitness & Wellness",
-    icon: <FitnessCenterIcon sx={{ fontSize: 40, color: "#FF9900" }} />,
-    description: "Quick workouts and wellness tips for a healthier lifestyle",
-    videos: 180,
-    gradient: "from-green-500 to-blue-500",
-  },
-];
-
-const knowledgeResources = [
-  {
-    title: "Comprehensive Courses",
-    icon: <MenuBookIcon sx={{ fontSize: 40, color: "#FF9900" }} />,
-    description:
-      "In-depth learning paths covering various topics from basics to advanced concepts.",
-    count: "25+ Courses",
-    topics: ["Web Development", "Digital Marketing", "Personal Growth"],
-    gradient: "from-blue-400 to-indigo-500",
-  },
-  {
-    title: "Expert Articles",
-    icon: <ArticleIcon sx={{ fontSize: 40, color: "#FF9900" }} />,
-    description:
-      "Well-researched articles and guides written by industry experts.",
-    count: "100+ Articles",
-    topics: ["Technology", "Business", "Self Development"],
-    gradient: "from-indigo-400 to-purple-500",
-  },
-  {
-    title: "Video Tutorials",
-    icon: <VideoLibraryIcon sx={{ fontSize: 40, color: "#FF9900" }} />,
-    description: "Step-by-step video guides and practical demonstrations.",
-    count: "200+ Videos",
-    topics: ["Coding", "Design", "Leadership"],
-    gradient: "from-purple-400 to-pink-500",
-  },
-  {
-    title: "Podcasts & Talks",
-    icon: <PodcastsIcon sx={{ fontSize: 40, color: "#FF9900" }} />,
-    description: "Insightful discussions and interviews with industry leaders.",
-    count: "50+ Episodes",
-    topics: ["Innovation", "Career Growth", "Industry Trends"],
-    gradient: "from-pink-400 to-red-500",
-  },
-];
-
+// TypedText animated headline component
 const phrases = [
-  "Fueling the Journey of Minds, One Idea at a Time",
-  "Empowering Growth Through Digital Innovation",
-  "Transforming Knowledge into Success Stories",
-  "Building Tomorrow's Leaders Today",
-  "Inspiring Excellence in Every Journey",
+  "Designing Digital Systems Built to Last",
+  "Architecture Before Code. Clarity Before Scale",
+  "Turning Ideas into Reliable Systems",
+  "From Strategy to Production-Ready Platforms",
+  "Building Scalable Technology with Purpose",
 ];
 
 const TypedText = () => {
@@ -278,1061 +36,641 @@ const TypedText = () => {
       if (!isDeleting) {
         setCurrentText(currentPhrase.substring(0, currentText.length + 1));
         setTypingSpeed(100);
-
-        if (currentText === currentPhrase) {
-          setTypingSpeed(2000); // Pause at the end
-          setIsDeleting(true);
-        }
       } else {
         setCurrentText(currentPhrase.substring(0, currentText.length - 1));
         setTypingSpeed(50);
+      }
 
-        if (currentText === "") {
-          setIsDeleting(false);
-          setCurrentPhraseIndex(
-            (prevIndex) => (prevIndex + 1) % phrases.length
-          );
-        }
+      // If finished typing and not deleting, pause then start deleting
+      if (!isDeleting && currentText === currentPhrase) {
+        setTimeout(() => setIsDeleting(true), 1000);
+      }
+      // If finished deleting, move to next phrase
+      else if (isDeleting && currentText === "") {
+        setIsDeleting(false);
+        setCurrentPhraseIndex((prev) => (prev + 1) % phrases.length);
       }
     }, typingSpeed);
-
     return () => clearTimeout(timeout);
-  }, [currentText, isDeleting, currentPhraseIndex, typingSpeed]);
+  }, [currentText, isDeleting, typingSpeed, currentPhraseIndex]);
 
   return (
-    <Typography
-      variant="h2"
-      className="font-poppins font-bold mb-4"
-      sx={{
-        fontSize: {
-          xs: "1.75rem",
-          sm: "2.25rem",
-          md: "3rem",
-        },
-        minHeight: { xs: "80px", sm: "100px", md: "120px" },
-        display: "block",
-        position: "relative",
-        zIndex: 15,
-        padding: "0 4px",
-        filter: "drop-shadow(0 2px 4px rgba(0,0,0,0.1))",
-        whiteSpace: "pre-wrap",
-        wordBreak: "break-word",
-        lineHeight: 1.4,
-        color: "#FF9900",
-        "& .typing-container": {
-          display: "inline",
-          position: "relative",
-          background: "linear-gradient(45deg, #FF9900 30%, #FFD700 90%)",
-          WebkitBackgroundClip: "text",
-          WebkitTextFillColor: "transparent",
-          backgroundClip: "text",
-        },
-        "& .cursor": {
-          display: "inline-block",
-          width: "2px",
-          height: "1em",
-          transform: "translateY(2px)",
-          backgroundColor: "#FF9900",
-          marginLeft: "2px",
-          animation: "blink 1s step-start infinite",
-          filter: "drop-shadow(0 2px 4px rgba(0,0,0,0.1))",
-          position: "relative",
-          top: "0.1em",
-        },
-        "@keyframes blink": {
-          "50%": {
-            opacity: 0,
-          },
-        },
-      }}
-    >
-      <span className="typing-container">{currentText}</span>
-      <span className="cursor" />
-    </Typography>
+    <span>
+      {currentText}
+      <span className="typed-cursor">_</span>
+    </span>
   );
 };
 
-// ============================================================================
-// Component
-// ============================================================================
+// Categories data
+const categories = [
+  {
+    title: "Digital Product Design",
+    description:
+      "UI/UX, prototyping, and user-centered design for web and mobile products that delight and engage.",
+    icon: "🎨",
+    iconLabel: "design",
+    avatarBgColor: "#FF9900",
+  },
+  {
+    title: "System Architecture",
+    description:
+      "Robust, scalable, and maintainable architecture for cloud, SaaS, and enterprise platforms.",
+    icon: "🏗️",
+    iconLabel: "architecture",
+    avatarBgColor: "#1A1A2E",
+  },
+  {
+    title: "Software Engineering",
+    description:
+      "End-to-end development, testing, and deployment of reliable digital solutions.",
+    icon: "💻",
+    iconLabel: "engineering",
+    avatarBgColor: "#FFD580",
+    avatarTextColor: "#1A1A2E",
+  },
+  {
+    title: "DevOps & Automation",
+    description:
+      "CI/CD, cloud infrastructure, and workflow automation for faster, safer releases.",
+    icon: "⚙️",
+    iconLabel: "devops",
+    avatarBgColor: "#FF9900",
+  },
+  {
+    title: "Data & Analytics",
+    description:
+      "Data engineering, dashboards, and insights to drive smarter business decisions.",
+    icon: "📊",
+    iconLabel: "data",
+    avatarBgColor: "#1A1A2E",
+  },
+  {
+    title: "Product Strategy",
+    description:
+      "Vision, roadmapping, and go-to-market planning for digital products that succeed.",
+    icon: "🧭",
+    iconLabel: "strategy",
+    avatarBgColor: "#FFD580",
+    avatarTextColor: "#1A1A2E",
+  },
+];
 
-/**
- * Home Page Component
- *
- * Structure:
- * 1. Hero Section - Main banner with headline and call-to-action
- * 2. Categories Section - Three main categories with icons
- * 3. Featured Content Section - Grid of featured articles
- * 4. Shop With Us Section - A vibrant card with a catchy headline, short description, and a 'Shop Now' button
- */
+// Pricing tiers data
+const pricingTiers = [
+  {
+    tierNumber: 1,
+    title: "System Blueprint",
+    price: "From $300 – $800",
+    description: "For founders who need clarity before building",
+    features: [
+      "Business & product requirements review",
+      "High-level system architecture",
+      "Tech stack recommendation",
+      "Database & data-flow design",
+      "Security & scalability considerations",
+      "MVP feature breakdown",
+      "Architecture diagram (PDF)",
+    ],
+    color: "#22c55e",
+    colorDark: "#16a34a",
+    deliverables: "System blueprint document, diagrams, roadmap",
+    bestFor: "early-stage founders, planning phase",
+    outcome: "You know exactly what to build and how",
+  },
+  {
+    tierNumber: 2,
+    title: "MVP Build",
+    price: "From $1,500 – $4,000",
+    description: "From idea to working product",
+    features: [
+      "System architecture (Tier 1 concepts applied)",
+      "UX/UI implementation",
+      "Full-stack development (web or mobile)",
+      "Backend APIs & database",
+      "Authentication & basic security",
+      "Payment / third-party integration (basic)",
+      "Deployment to production server",
+    ],
+    color: "#2563eb",
+    colorDark: "#1d4ed8",
+    deliverables: "Live MVP, admin access, backend, code repo",
+    bestFor: "startups, platforms, fintech MVPs",
+    outcome: "A real, usable product in production",
+  },
+  {
+    tierNumber: 3,
+    title: "Production System",
+    price: "From $4,000 – $10,000+",
+    description: "Built for scale, security & reliability",
+    features: [
+      "Advanced system architecture",
+      "Optimized database design",
+      "Full UX/UI refinement",
+      "Performance & security hardening",
+      "CI/CD setup",
+      "Backups, monitoring & logging",
+      "Production-grade deployment",
+      "Documentation & handover",
+    ],
+    color: "#a21caf",
+    colorDark: "#86198f",
+    deliverables: "Scalable system, infra docs, pipelines",
+    bestFor: "fintech, marketplaces, serious startups",
+    outcome: "A system designed to last",
+  },
+  {
+    tierNumber: 4,
+    title: "Architecture & Technical Consulting",
+    price: "$50 – $100 / hour<br />or<br />Monthly retainer from $500",
+    description: "Strategic guidance without full build",
+    features: [
+      "Architecture reviews",
+      "System audits",
+      "Security & performance advice",
+      "Technical decision support",
+      "Scaling & refactor planning",
+    ],
+    color: "#f59e42",
+    colorDark: "#d97706",
+    bestFor: "teams with developers, founders needing guidance",
+    outcome: "Better decisions, fewer mistakes",
+  },
+  {
+    tierNumber: 5,
+    title: "Technical Co-Founder / Long-Term Partner",
+    price: "Custom (cash + equity)",
+    description: "For selected startups only",
+    features: [
+      "Long-term system ownership",
+      "Architecture leadership",
+      "Full-stack development oversight",
+      "Infrastructure & deployment strategy",
+      "Product & growth alignment",
+    ],
+    color: "#ef4444",
+    colorDark: "#dc2626",
+    bestFor: "high-potential startups",
+    outcome: "A real technical partner, not a contractor",
+  },
+];
+
+// Main Home component
 const Home = () => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
-  const isTablet = useMediaQuery(theme.breakpoints.down("md"));
-  const [isFullView, setIsFullView] = useState(false);
-
+  const [viewParticles, setViewParticles] = useState(false);
   return (
     <Box sx={{ overflow: "hidden" }}>
-      {/* ====================================================================
-          1. HERO SECTION
-          ==================================================================== */}
+      {/* ================= HERO SECTION ================= */}
+      {/* 
+        Main hero section with animated typing text, particle background, and CTA buttons.
+        Features:
+        - Dark gradient background aligned with LASTTE branding
+        - Interactive particle system (toggleable)
+        - Animated typing headline component
+        - Modern call-to-action buttons with glassmorphism effects
+        - Responsive design for mobile and desktop
+      */}
       <Box
         sx={{
-          background: "linear-gradient(45deg, #1A1A2E 30%, #FF9900 90%)",
+          background:
+            "linear-gradient(135deg, #050816 0%, #1A1A2E 50%, #0F1419 100%)",
           color: "white",
           margin: 0,
-          padding: "64px 0",
-          paddingTop: isMobile ? "64px" : "128px",
+          p: { xs: "40px 0 24px 0", sm: "64px 0" },
+          pt: { xs: "64px", sm: "128px" },
           position: "relative",
           overflow: "hidden",
           minHeight: "100vh",
           display: "flex",
           alignItems: "center",
+          "&::before": {
+            content: '""',
+            position: "absolute",
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            background:
+              "radial-gradient(circle at 20% 50%, rgba(255,153,0,0.1) 0%, transparent 50%), radial-gradient(circle at 80% 80%, rgba(255,213,128,0.08) 0%, transparent 50%)",
+            pointerEvents: "none",
+            zIndex: 1,
+          },
         }}
       >
-        <ParticleBackground fullView={isFullView} />
-        {!isFullView && (
-          <Container
-            maxWidth="lg"
-            sx={{
-              position: "relative",
-              zIndex: 5,
-              px: { xs: 3, sm: 4, md: 6 },
-            }}
-          >
-            <Grid container spacing={4} alignItems="center">
-              {/* Left side: Text content */}
+        {/* Interactive particle background component */}
+        <ParticleBackground fullView={viewParticles} />
+
+        {/* Hero content - shown when particles are not in full view */}
+        {!viewParticles && (
+          <Container maxWidth="lg" sx={{ position: "relative", zIndex: 2 }}>
+            <Grid
+              container
+              spacing={{ xs: 4, md: 6 }}
+              alignItems="center"
+              sx={{
+                minHeight: { xs: "auto", md: "80vh" },
+                py: { xs: 4, md: 6 },
+              }}
+            >
+              {/* Left column: Headline + Value Proposition + CTAs */}
               <Grid item xs={12} md={6}>
+                {/* LASTTE Brand Badge */}
                 <Box
-                  className="animate-fade-in"
                   sx={{
-                    position: "relative",
-                    zIndex: 10,
-                    height: { xs: "auto", sm: "250px", md: "300px" },
-                    minHeight: { xs: "300px", sm: "250px", md: "300px" },
-                    display: "flex",
-                    flexDirection: "column",
-                    justifyContent: "center",
-                    background: "none",
-                    backdropFilter: "none",
-                    borderRadius: "16px",
-                    p: { xs: 2, sm: 3 },
-                    border: "none",
-                    transition: "all 0.3s ease",
-                    gap: { xs: 2, sm: 3 },
+                    display: "inline-flex",
+                    alignItems: "center",
+                    mb: 3,
+                    px: 2,
+                    py: 0.75,
+                    borderRadius: 2,
+                    background: "rgba(255,213,128,0.1)",
+                    border: "1px solid rgba(255,213,128,0.2)",
+                    backdropFilter: "blur(8px)",
                   }}
                 >
-                  <Box
-                    sx={{
-                      flex: 1,
-                      display: "flex",
-                      flexDirection: "column",
-                      justifyContent: "center",
-                      minHeight: { xs: "200px", sm: "auto" },
-                    }}
-                  >
-                    <TypedText />
-                  </Box>
                   <Typography
-                    variant={isMobile ? "body1" : "h5"}
-                    className="mb-8"
                     sx={{
-                      fontSize: isMobile
-                        ? "0.9rem"
-                        : isTablet
-                        ? "1.25rem"
-                        : "1.5rem",
-                      color: "rgba(255, 255, 255, 0.95)",
-                      position: "relative",
-                      zIndex: 2,
-                      textShadow: "0 2px 4px rgba(0, 0, 0, 0.15)",
-                      maxWidth: "90%",
-                      lineHeight: 1.4,
-                      mt: { xs: 2, sm: 0 },
+                      color: "#FFD580",
+                      fontSize: { xs: "0.75rem", sm: "0.875rem" },
+                      fontWeight: 700,
+                      letterSpacing: "0.15em",
+                      textTransform: "uppercase",
                     }}
                   >
-                    Discover ideas that ignite growth, innovation, and a better
-                    world.
+                    LASTTE
                   </Typography>
                 </Box>
-              </Grid>
-              {/* Right side: Hero image placeholder - Hidden on mobile */}
-              {!isMobile && (
-                <Grid item xs={12} md={6}>
-                  <Box
-                    className="flex flex-col justify-center animate-fade-in-delayed"
-                    sx={{ position: "relative", zIndex: 1 }}
+
+                {/* Main headline */}
+                <Typography
+                  variant={isMobile ? "h3" : "h2"}
+                  component="h1"
+                  sx={{
+                    fontWeight: 500,
+                    mb: { xs: 2, md: 3 },
+                    lineHeight: { xs: 1.2, md: 1.1 },
+                    letterSpacing: { xs: "-0.01em", md: "-0.02em" },
+                    color: "#fff",
+                    fontSize: {
+                      xs: "1.75rem",
+                      sm: "2rem",
+                      md: "3rem",
+                      lg: "3.5rem",
+                    },
+                    minHeight: {
+                      xs: "6.3rem", // 1.75rem * 1.2 * 3 lines
+                      sm: "7.2rem", // 2rem * 1.2 * 3 lines
+                      md: "9.9rem", // 3rem * 1.1 * 3 lines
+                      lg: "11.55rem", // 3.5rem * 1.1 * 3 lines
+                    },
+                    textShadow: "0 4px 20px rgba(0,0,0,0.3)",
+                  }}
+                >
+                  <TypedText />
+                </Typography>
+
+                {/* Value proposition subtitle */}
+                <Typography
+                  variant={isMobile ? "body1" : "h6"}
+                  sx={{
+                    mb: { xs: 4, md: 5 },
+                    color: "rgba(255,255,255,0.8)",
+                    fontWeight: 400,
+                    maxWidth: 600,
+                    fontSize: { xs: "1rem", sm: "1.125rem", md: "1.25rem" },
+                    lineHeight: 1.6,
+                  }}
+                >
+                  Helping you design, build, and scale digital products and
+                  platforms with clarity, reliability, and purpose.
+                </Typography>
+
+                {/* Call-to-action buttons container */}
+                <Box
+                  sx={{
+                    display: "flex",
+                    gap: { xs: 1.5, sm: 2 },
+                    flexWrap: "wrap",
+                    alignItems: "center",
+                  }}
+                >
+                  {/* Primary CTA: Learn More button */}
+                  <Button
+                    variant="contained"
+                    size={isMobile ? "medium" : "large"}
+                    sx={{
+                      borderRadius: 99,
+                      fontWeight: 700,
+                      px: { xs: 3, md: 5 },
+                      py: { xs: 1.25, md: 1.75 },
+                      fontSize: { xs: "0.95rem", md: "1.1rem" },
+                      background:
+                        "linear-gradient(135deg, #FF9900 0%, #FFD580 100%)",
+                      color: "#1A1A2E",
+                      boxShadow: "0 4px 20px rgba(255,153,0,0.3)",
+                      textTransform: "none",
+                      letterSpacing: "0.05em",
+                      "&:hover": {
+                        background:
+                          "linear-gradient(135deg, #FFD580 0%, #FF9900 100%)",
+                        boxShadow: "0 6px 30px rgba(255,153,0,0.4)",
+                        transform: "translateY(-2px)",
+                      },
+                      transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
+                    }}
+                    component={RouterLink}
+                    to="/about"
                   >
-                    <Box
-                      className="w-full h-48 md:h-64 bg-white bg-opacity-20 rounded-lg p-4"
+                    Learn More
+                  </Button>
+
+                  {/* Secondary CTA: Get in Touch button */}
+                  <Button
+                    variant="outlined"
+                    size={isMobile ? "medium" : "large"}
+                    sx={{
+                      borderRadius: 99,
+                      fontWeight: 700,
+                      px: { xs: 3, md: 5 },
+                      py: { xs: 1.25, md: 1.75 },
+                      fontSize: { xs: "0.95rem", md: "1.1rem" },
+                      borderColor: "#FFD580",
+                      borderWidth: 2,
+                      color: "#FFD580",
+                      background: "rgba(255,213,128,0.05)",
+                      backdropFilter: "blur(8px)",
+                      textTransform: "none",
+                      letterSpacing: "0.05em",
+                      "&:hover": {
+                        borderColor: "#FF9900",
+                        color: "#FF9900",
+                        background: "rgba(255,153,0,0.1)",
+                        transform: "translateY(-2px)",
+                        boxShadow: "0 4px 20px rgba(255,153,0,0.2)",
+                      },
+                      transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
+                    }}
+                    component={RouterLink}
+                    to="/contact"
+                  >
+                    Get in Touch
+                  </Button>
+
+                  {/* Tertiary CTA: View Particles button (desktop only) */}
+                  {!isMobile && (
+                    <Button
+                      variant="text"
+                      size="large"
                       sx={{
-                        display: "flex",
-                        flexDirection: "column",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        gap: 2,
+                        borderRadius: 99,
+                        fontWeight: 600,
+                        px: 3,
+                        py: 1.75,
+                        fontSize: "1rem",
+                        color: "rgba(255,255,255,0.7)",
+                        textTransform: "none",
+                        letterSpacing: "0.05em",
+                        "&:hover": {
+                          color: "#FFD580",
+                          background: "rgba(255,213,128,0.1)",
+                        },
+                        transition: "all 0.3s ease",
                       }}
+                      onClick={() => setViewParticles(true)}
                     >
-                      <Typography
-                        variant="h6"
-                        sx={{
-                          color: "white",
-                          textAlign: "center",
-                          fontWeight: "bold",
-                          textShadow: "0 2px 4px rgba(0, 0, 0, 0.2)",
-                        }}
-                      >
-                        Interactive Knowledge Particles
-                      </Typography>
-                      <Typography
-                        variant="body2"
-                        sx={{
-                          color: "rgba(255, 255, 255, 0.9)",
-                          textAlign: "center",
-                          maxWidth: "80%",
-                          mb: 2,
-                        }}
-                      >
-                        Each particle represents a unique fact about learning
-                        and personal development. Click to discover insights
-                        about Brain Power, Learning, Wellness, and Productivity.
-                      </Typography>
-                      <Box
-                        sx={{
-                          display: "flex",
-                          flexWrap: "wrap",
-                          gap: 1,
-                          justifyContent: "center",
-                          mb: 2,
-                        }}
-                      >
-                        {[
-                          "Brain Power",
-                          "Learning",
-                          "Wellness",
-                          "Productivity",
-                        ].map((category) => (
-                          <Chip
-                            key={category}
-                            label={category}
-                            sx={{
-                              backgroundColor: "rgba(255, 255, 255, 0.2)",
-                              color: "white",
-                              backdropFilter: "blur(8px)",
-                              border: "1px solid rgba(255, 255, 255, 0.3)",
-                            }}
-                          />
-                        ))}
-                      </Box>
-                      <Button
-                        variant="contained"
-                        onClick={() => setIsFullView(!isFullView)}
-                        sx={{
-                          backgroundColor: "rgba(255, 255, 255, 0.2)",
-                          backdropFilter: "blur(8px)",
-                          color: "white",
-                          "&:hover": {
-                            backgroundColor: "rgba(255, 255, 255, 0.3)",
-                          },
-                        }}
-                      >
-                        {isFullView ? "Exit Full View" : "View Particles"}
-                      </Button>
-                    </Box>
-                  </Box>
-                </Grid>
-              )}
+                      View Particles
+                    </Button>
+                  )}
+                </Box>
+              </Grid>
+
+              {/* Right column: Terminal */}
+              <Grid item xs={12} md={6}>
+                <Box
+                  sx={{
+                    display: "flex",
+                    justifyContent: { xs: "center", md: "flex-start" },
+                  }}
+                >
+                  <HeroTerminal isMobile={isMobile} />
+                </Box>
+              </Grid>
             </Grid>
           </Container>
         )}
-        {isFullView && !isMobile && (
-          <Box
+
+        {/* Back button - shown when particles are in full view mode */}
+        {viewParticles && !isMobile && (
+          <Button
+            variant="contained"
+            size="medium"
             sx={{
               position: "absolute",
-              top: 16,
-              left: 16,
+              top: 32,
+              right: 32,
               zIndex: 10,
+              borderRadius: 99,
+              fontWeight: 700,
+              px: 3,
+              py: 1.5,
+              fontSize: "1rem",
+              background: "rgba(255,153,0,0.9)",
+              backdropFilter: "blur(12px)",
+              color: "#1A1A2E",
+              boxShadow: "0 4px 20px rgba(255,153,0,0.3)",
+              border: "1px solid rgba(255,213,128,0.3)",
+              textTransform: "none",
+              letterSpacing: "0.05em",
+              "&:hover": {
+                background: "rgba(255,213,128,0.95)",
+                boxShadow: "0 6px 30px rgba(255,153,0,0.4)",
+                transform: "translateY(-2px)",
+              },
+              transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
             }}
+            onClick={() => setViewParticles(false)}
           >
-            <Button
-              variant="contained"
-              onClick={() => setIsFullView(!isFullView)}
-              sx={{
-                backgroundColor: "rgba(255, 255, 255, 0.2)",
-                backdropFilter: "blur(8px)",
-                color: "white",
-                "&:hover": {
-                  backgroundColor: "rgba(255, 255, 255, 0.3)",
-                },
-              }}
-            >
-              {isFullView ? "Exit Full View" : "View Particles"}
-            </Button>
-          </Box>
+            Back
+          </Button>
         )}
       </Box>
 
-      {/* ====================================================================
-          2. CATEGORIES SECTION
-          ==================================================================== */}
-      <Container maxWidth="lg" className="py-10 md:py-16">
+      {/* ================= CATEGORIES SECTION ================= */}
+      {/* 
+        Core capabilities showcase section displaying 6 key service categories.
+        Features:
+        - Grid layout with 3 columns on desktop, responsive on mobile
+        - Hover animations on cards
+        - Icon-based visual representation for each category
+        - Clean white background with card-based design
+      */}
+      <Container maxWidth="lg" sx={{ py: { xs: 6, md: 10 } }}>
+        {/* Section heading */}
         <Typography
-          variant={isMobile ? "h4" : "h3"}
-          className="text-center font-poppins font-bold mb-8 md:mb-12"
+          variant="h4"
+          align="center"
           sx={{
-            fontSize: isMobile ? "1.5rem" : isTablet ? "2rem" : "2.5rem",
-            background: "linear-gradient(45deg, #1A1A2E 30%, #FF9900 90%)",
-            WebkitBackgroundClip: "text",
-            WebkitTextFillColor: "transparent",
+            fontWeight: 700,
+            mb: 6,
+            color: "#1A1A2E",
+            letterSpacing: "-0.01em",
           }}
         >
-          Explore Categories
+          Explore Our Core Capabilities
         </Typography>
-        <Grid container spacing={4} sx={{ px: isMobile ? 1 : 0 }}>
+
+        {/* Categories grid container */}
+        <Grid container spacing={4} justifyContent="center">
+          {/* Render category cards */}
           {categories.map((category, index) => (
-            <Grid item xs={12} sm={6} md={4} key={category.title}>
-              <Box
-                className="animate-fade-in"
-                style={{
-                  animationDelay: `${index * 0.2}s`,
-                }}
-              >
-                <Card
-                  className={`h-full transition-all duration-300 relative overflow-hidden hover:translate-y-[-8px]`}
-                  sx={{
-                    boxShadow: "0 4px 20px rgba(0,0,0,0.08)",
-                    "&:hover": {
-                      boxShadow: "0 8px 30px rgba(0,0,0,0.12)",
-                    },
-                  }}
-                >
-                  <Box
-                    className={`absolute inset-0 opacity-5 bg-gradient-to-br ${category.gradient}`}
-                  />
-                  <CardContent className="text-center p-6 relative">
-                    <Box className="mb-4 transform transition-transform duration-300 hover:scale-110">
-                      {category.icon}
-                    </Box>
-                    <Typography
-                      variant={isMobile ? "h6" : "h5"}
-                      className="font-poppins font-bold mb-3"
-                      sx={{
-                        fontSize: isMobile ? "1.1rem" : "1.25rem",
-                        color: "#1A1A2E",
-                      }}
-                    >
-                      {category.title}
-                    </Typography>
-                    <Typography
-                      variant="body2"
-                      color="text.secondary"
-                      className="mb-4"
-                      sx={{ opacity: 0.85 }}
-                    >
-                      {category.description}
-                    </Typography>
-                    <Typography
-                      variant="subtitle2"
-                      sx={{
-                        color: "#FF9900",
-                        mb: 2,
-                        fontWeight: 600,
-                        textShadow: "0 1px 2px rgba(0,0,0,0.1)",
-                      }}
-                    >
-                      {category.stats}
-                    </Typography>
-                    <Box className="flex flex-wrap gap-1 justify-center">
-                      {category.topics.map((topic) => (
-                        <Chip
-                          key={topic}
-                          label={topic}
-                          size="small"
-                          sx={{
-                            bgcolor: "rgba(255, 153, 0, 0.08)",
-                            color: "#1A1A2E",
-                            border: "1px solid rgba(255, 153, 0, 0.2)",
-                            "&:hover": {
-                              bgcolor: "rgba(255, 153, 0, 0.15)",
-                              transform: "scale(1.05)",
-                            },
-                            transition: "all 0.2s ease",
-                          }}
-                        />
-                      ))}
-                    </Box>
-                  </CardContent>
-                </Card>
-              </Box>
-            </Grid>
-          ))}
-        </Grid>
-      </Container>
-
-      {/* ====================================================================
-          3. FEATURED CONTENT SECTION
-          ==================================================================== */}
-      <Box className="bg-gray-50 py-10 md:py-16">
-        <Container maxWidth="lg">
-          <Typography
-            variant={isMobile ? "h4" : "h3"}
-            className="text-center font-poppins font-bold mb-8 md:mb-12"
-            sx={{
-              fontSize: isMobile ? "1.5rem" : isTablet ? "2rem" : "2.5rem",
-              background: "linear-gradient(45deg, #1A1A2E 30%, #FF9900 90%)",
-              WebkitBackgroundClip: "text",
-              WebkitTextFillColor: "transparent",
-            }}
-          >
-            Featured Content
-          </Typography>
-          <Grid container spacing={4} sx={{ px: isMobile ? 1 : 0 }}>
-            {featuredArticles.map((item, idx) => (
-              <Grid item xs={12} sm={6} md={4} key={item.id}>
-                <Box
-                  className="animate-fade-in"
-                  style={{
-                    animationDelay: `${(idx + 1) * 0.2}s`,
-                  }}
-                >
-                  <Card
-                    className="h-full transition-all duration-300 hover:translate-y-[-8px]"
-                    sx={{
-                      boxShadow: "0 4px 20px rgba(0,0,0,0.08)",
-                      "&:hover": {
-                        boxShadow: "0 8px 30px rgba(0,0,0,0.12)",
-                      },
-                    }}
-                  >
-                    <CardMedia
-                      component="img"
-                      height={isMobile ? 160 : 200}
-                      image={item.image}
-                      alt={item.title}
-                      sx={{
-                        transition: "transform 0.3s ease",
-                        "&:hover": {
-                          transform: "scale(1.05)",
-                        },
-                      }}
-                    />
-                    <CardContent sx={{ p: 3 }}>
-                      <Typography
-                        variant={isMobile ? "subtitle1" : "h6"}
-                        className="font-poppins font-bold mb-2"
-                        sx={{
-                          fontSize: isMobile ? "1rem" : "1.1rem",
-                          color: "#1A1A2E",
-                        }}
-                      >
-                        {item.title}
-                      </Typography>
-                      <Typography
-                        variant="body2"
-                        color="text.secondary"
-                        className="mb-3"
-                        sx={{ opacity: 0.85 }}
-                      >
-                        {item.description}
-                      </Typography>
-                      <Box className="flex items-center justify-between mb-3">
-                        <Typography
-                          variant="caption"
-                          sx={{
-                            color: "#FF9900",
-                            fontWeight: 600,
-                          }}
-                        >
-                          By {item.author}
-                        </Typography>
-                        <Typography
-                          variant="caption"
-                          sx={{
-                            color: "text.secondary",
-                            bgcolor: "rgba(255, 153, 0, 0.08)",
-                            px: 1,
-                            py: 0.5,
-                            borderRadius: 1,
-                          }}
-                        >
-                          {item.readTime}
-                        </Typography>
-                      </Box>
-                      <Box className="flex flex-wrap gap-1">
-                        {item.tags.map((tag) => (
-                          <Chip
-                            key={tag}
-                            label={tag}
-                            size="small"
-                            sx={{
-                              bgcolor: "rgba(255, 153, 0, 0.08)",
-                              color: "#1A1A2E",
-                              border: "1px solid rgba(255, 153, 0, 0.2)",
-                              "&:hover": {
-                                bgcolor: "rgba(255, 153, 0, 0.15)",
-                                transform: "scale(1.05)",
-                              },
-                              transition: "all 0.2s ease",
-                            }}
-                          />
-                        ))}
-                      </Box>
-                    </CardContent>
-                  </Card>
-                </Box>
-              </Grid>
-            ))}
-          </Grid>
-        </Container>
-      </Box>
-
-      {/* ====================================================================
-          4. SHOP WITH US SECTION
-          ==================================================================== */}
-      <Container maxWidth="lg" className="py-10 md:py-16">
-        <Grid container spacing={6} alignItems="center">
-          {/* Left side: Content */}
-          <Grid item xs={12} md={6}>
-            <Box className="animate-fade-in">
-              <Typography
-                variant={isMobile ? "h4" : "h3"}
-                className="font-poppins font-bold mb-4"
-                sx={{
-                  fontSize: isMobile ? "1.5rem" : isTablet ? "2rem" : "2.5rem",
-                  background:
-                    "linear-gradient(45deg, #1A1A2E 30%, #FF9900 90%)",
-                  WebkitBackgroundClip: "text",
-                  WebkitTextFillColor: "transparent",
-                }}
-              >
-                Shop With Us
-              </Typography>
-              <Typography
-                variant="body1"
-                color="text.secondary"
-                className="mb-6"
-                sx={{ fontSize: isMobile ? "1rem" : "1.1rem" }}
-              >
-                Discover our curated collection of products designed to enhance
-                your learning journey. From digital tools to physical resources,
-                find everything you need to succeed.
-              </Typography>
-              <Button
-                variant="contained"
-                href="/shop"
-                sx={{
-                  bgcolor: "#FF9900",
-                  color: "white",
-                  px: 4,
-                  py: 1.5,
-                  fontSize: "1.1rem",
-                  fontWeight: 600,
-                  "&:hover": {
-                    bgcolor: "#e68a00",
-                  },
-                }}
-              >
-                Visit Shop
-              </Button>
-            </Box>
-          </Grid>
-          {/* Right side: Image */}
-          <Grid item xs={12} md={6}>
-            <Box className="animate-fade-in-delayed">
-              <img
-                src={shopImage}
-                alt="QuestDea Shop"
-                style={{
-                  width: "100%",
-                  height: "auto",
-                  maxHeight: "400px",
-                  objectFit: "cover",
-                  borderRadius: "12px",
-                  boxShadow: "0 4px 20px rgba(0,0,0,0.1)",
-                }}
+            <Grid item xs={12} sm={6} md={4} key={index}>
+              <CategoryCard
+                title={category.title}
+                description={category.description}
+                icon={category.icon}
+                iconLabel={category.iconLabel}
+                avatarBgColor={category.avatarBgColor}
+                avatarTextColor={category.avatarTextColor}
               />
-            </Box>
-          </Grid>
-        </Grid>
-      </Container>
-
-      {/* ====================================================================
-          5. QUESTDEA STREAMS SECTION
-          ==================================================================== */}
-      <Box className="bg-gray-50 py-10 md:py-16">
-        <Container maxWidth="lg">
-          {/* Header */}
-          <Box className="text-center mb-12">
-            <Typography
-              variant={isMobile ? "h4" : "h3"}
-              className="font-poppins font-bold mb-4"
-              sx={{
-                fontSize: isMobile ? "1.5rem" : isTablet ? "2rem" : "2.5rem",
-                background: "linear-gradient(45deg, #1A1A2E 30%, #FF9900 90%)",
-                WebkitBackgroundClip: "text",
-                WebkitTextFillColor: "transparent",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                gap: 2,
-              }}
-            >
-              QuestDea Streams
-            </Typography>
-            <Typography
-              variant="h6"
-              sx={{
-                opacity: 0.9,
-                maxWidth: "800px",
-                margin: "0 auto",
-                fontSize: isMobile ? "1rem" : "1.1rem",
-                color: "text.secondary",
-              }}
-            >
-              Stream and watch engaging content from our community of experts
-              and creators
-            </Typography>
-          </Box>
-
-          {/* Stream Categories Grid */}
-          <Grid container spacing={4}>
-            {streamCategories.map((category) => (
-              <Grid item xs={12} sm={6} md={3} key={category.title}>
-                <Card
-                  className="h-full transition-all duration-300 hover:translate-y-[-8px]"
-                  sx={{
-                    boxShadow: "0 4px 20px rgba(0,0,0,0.08)",
-                    "&:hover": {
-                      boxShadow: "0 8px 30px rgba(0,0,0,0.12)",
-                    },
-                    position: "relative",
-                    overflow: "hidden",
-                  }}
-                >
-                  <Box
-                    className={`absolute inset-0 opacity-5 bg-gradient-to-br ${category.gradient}`}
-                  />
-                  <CardContent sx={{ p: 3, position: "relative" }}>
-                    <Box className="flex justify-center mb-4 transform transition-transform duration-300 hover:scale-110">
-                      {category.icon}
-                    </Box>
-                    <Typography
-                      variant="h6"
-                      align="center"
-                      sx={{
-                        fontSize: "1.1rem",
-                        fontWeight: 600,
-                        color: "#1A1A2E",
-                        mb: 2,
-                      }}
-                    >
-                      {category.title}
-                    </Typography>
-                    <Typography
-                      variant="body2"
-                      align="center"
-                      sx={{ color: "text.secondary", mb: 2 }}
-                    >
-                      {category.description}
-                    </Typography>
-                    <Typography
-                      variant="subtitle2"
-                      align="center"
-                      sx={{
-                        color: "#FF9900",
-                        fontWeight: 600,
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        gap: 1,
-                      }}
-                    >
-                      <PlayCircleIcon sx={{ fontSize: 20 }} />
-                      {category.videos}+ Videos
-                    </Typography>
-                  </CardContent>
-                </Card>
-              </Grid>
-            ))}
-          </Grid>
-
-          {/* Mobile App Download */}
-          <Box className="text-center mt-12">
-            <Typography
-              variant="h6"
-              className="mb-4"
-              sx={{ color: "text.secondary" }}
-            >
-              Download our mobile app to watch on the go
-            </Typography>
-            <Box className="flex justify-center gap-4">
-              <Button
-                variant="contained"
-                startIcon={<AppleIcon />}
-                sx={{
-                  bgcolor: "#1A1A2E",
-                  color: "white",
-                  "&:hover": {
-                    bgcolor: "#2A2A3E",
-                  },
-                }}
-              >
-                App Store
-              </Button>
-              <Button
-                variant="contained"
-                startIcon={<AndroidIcon />}
-                sx={{
-                  bgcolor: "#1A1A2E",
-                  color: "white",
-                  "&:hover": {
-                    bgcolor: "#2A2A3E",
-                  },
-                }}
-              >
-                Play Store
-              </Button>
-            </Box>
-          </Box>
-        </Container>
-      </Box>
-
-      {/* ====================================================================
-          6. KNOWLEDGE HUB SECTION
-          ==================================================================== */}
-      <Box className="bg-questdea-navy text-white py-16 relative overflow-hidden">
-        {/* Background Pattern */}
-        <Box
-          className="absolute inset-0 opacity-5"
-          sx={{
-            backgroundImage:
-              "radial-gradient(circle at 25px 25px, white 2%, transparent 0%)",
-            backgroundSize: "50px 50px",
-          }}
-        />
-
-        <Container maxWidth="lg" className="relative">
-          {/* Header */}
-          <Box className="text-center mb-12">
-            <Typography
-              variant={isMobile ? "h4" : "h3"}
-              className="font-poppins font-bold mb-4"
-              sx={{
-                fontSize: isMobile ? "1.5rem" : isTablet ? "2rem" : "2.5rem",
-                background: "linear-gradient(45deg, #FF9900 30%, #FFD700 90%)",
-                WebkitBackgroundClip: "text",
-                WebkitTextFillColor: "transparent",
-              }}
-            >
-              Knowledge Hub
-            </Typography>
-            <Typography
-              variant="h6"
-              sx={{
-                opacity: 0.9,
-                maxWidth: "800px",
-                margin: "0 auto",
-                fontSize: isMobile ? "1rem" : "1.1rem",
-              }}
-            >
-              Explore our comprehensive collection of learning resources
-              designed to help you grow
-            </Typography>
-          </Box>
-
-          {/* Resources Grid */}
-          <Grid container spacing={4}>
-            {knowledgeResources.map((resource) => (
-              <Grid item xs={12} sm={6} md={3} key={resource.title}>
-                <Card
-                  className="h-full transition-all duration-300 hover:translate-y-[-8px]"
-                  sx={{
-                    background: "rgba(255, 255, 255, 0.05)",
-                    backdropFilter: "blur(10px)",
-                    border: "1px solid rgba(255, 255, 255, 0.1)",
-                    boxShadow: "0 4px 20px rgba(0,0,0,0.2)",
-                    "&:hover": {
-                      boxShadow: "0 8px 30px rgba(0,0,0,0.3)",
-                    },
-                  }}
-                >
-                  <CardContent sx={{ p: 3 }}>
-                    <Box className="flex justify-center mb-4">
-                      {resource.icon}
-                    </Box>
-                    <Typography
-                      variant="h6"
-                      align="center"
-                      sx={{
-                        fontSize: "1.1rem",
-                        fontWeight: 600,
-                        color: "white",
-                        mb: 2,
-                      }}
-                    >
-                      {resource.title}
-                    </Typography>
-                    <Typography
-                      variant="body2"
-                      align="center"
-                      sx={{ color: "rgba(255,255,255,0.7)", mb: 2 }}
-                    >
-                      {resource.description}
-                    </Typography>
-                    <Typography
-                      variant="subtitle2"
-                      align="center"
-                      sx={{
-                        color: "#FF9900",
-                        mb: 2,
-                        fontWeight: 600,
-                      }}
-                    >
-                      {resource.count}
-                    </Typography>
-                    <Box className="flex flex-wrap gap-1 justify-center">
-                      {resource.topics.map((topic) => (
-                        <Chip
-                          key={topic}
-                          label={topic}
-                          size="small"
-                          sx={{
-                            bgcolor: "rgba(255, 153, 0, 0.08)",
-                            color: "white",
-                            border: "1px solid rgba(255, 153, 0, 0.2)",
-                            "&:hover": {
-                              bgcolor: "rgba(255, 153, 0, 0.15)",
-                              transform: "scale(1.05)",
-                            },
-                            transition: "all 0.2s ease",
-                          }}
-                        />
-                      ))}
-                    </Box>
-                  </CardContent>
-                </Card>
-              </Grid>
-            ))}
-          </Grid>
-
-          {/* Call to Action */}
-          <Box className="text-center mt-12">
-            <Button
-              variant="contained"
-              component={RouterLink}
-              to="/knowledge-hub"
-              sx={{
-                bgcolor: "#FF9900",
-                color: "white",
-                px: 4,
-                py: 1.5,
-                fontSize: "1.1rem",
-                fontWeight: 600,
-                "&:hover": {
-                  bgcolor: "#e68a00",
-                },
-              }}
-            >
-              Explore All Resources
-            </Button>
-          </Box>
-        </Container>
-      </Box>
-
-      {/* Success Stories Section */}
-      <Container maxWidth="lg" className="py-10 md:py-16">
-        <Typography
-          variant={isMobile ? "h4" : "h3"}
-          className="text-center font-poppins font-bold mb-8 md:mb-12"
-          sx={{
-            fontSize: isMobile ? "1.5rem" : isTablet ? "2rem" : "2.5rem",
-            background: "linear-gradient(45deg, #1A1A2E 30%, #FF9900 90%)",
-            WebkitBackgroundClip: "text",
-            WebkitTextFillColor: "transparent",
-          }}
-        >
-          Success Stories
-        </Typography>
-        <Grid container spacing={4}>
-          {successStories.map((story, index) => (
-            <Grid item xs={12} md={4} key={story.name}>
-              <Card
-                className="h-full transition-all duration-300 hover:translate-y-[-8px]"
-                sx={{
-                  boxShadow: "0 4px 20px rgba(0,0,0,0.08)",
-                  "&:hover": {
-                    boxShadow: "0 8px 30px rgba(0,0,0,0.12)",
-                  },
-                }}
-              >
-                <CardContent sx={{ p: 3 }}>
-                  <Box className="flex items-center mb-4">
-                    <Avatar
-                      src={story.image}
-                      alt={story.name}
-                      sx={{ width: 60, height: 60, marginRight: 2 }}
-                    />
-                    <Box>
-                      <Typography
-                        variant="h6"
-                        sx={{
-                          fontSize: "1.1rem",
-                          fontWeight: 600,
-                          color: "#1A1A2E",
-                        }}
-                      >
-                        {story.name}
-                      </Typography>
-                      <Typography
-                        variant="body2"
-                        sx={{ color: "#FF9900", fontWeight: 500 }}
-                      >
-                        {story.role}
-                      </Typography>
-                    </Box>
-                  </Box>
-                  <Typography
-                    variant="body2"
-                    sx={{
-                      mb: 2,
-                      fontStyle: "italic",
-                      color: "text.secondary",
-                      opacity: 0.85,
-                    }}
-                  >
-                    "{story.story}"
-                  </Typography>
-                  <Box className="flex items-center justify-between">
-                    <Box className="flex">
-                      {[...Array(story.rating)].map((_, i) => (
-                        <StarIcon
-                          key={i}
-                          sx={{
-                            color: "#FF9900",
-                            fontSize: 20,
-                          }}
-                        />
-                      ))}
-                    </Box>
-                    <Chip
-                      label={story.achievement}
-                      size="small"
-                      sx={{
-                        bgcolor: "rgba(255, 153, 0, 0.08)",
-                        color: "#1A1A2E",
-                        border: "1px solid rgba(255, 153, 0, 0.2)",
-                        "&:hover": {
-                          bgcolor: "rgba(255, 153, 0, 0.15)",
-                          transform: "scale(1.05)",
-                        },
-                        transition: "all 0.2s ease",
-                      }}
-                    />
-                  </Box>
-                </CardContent>
-              </Card>
             </Grid>
           ))}
         </Grid>
       </Container>
 
-      {/* Learning Paths Section */}
-      <Box className="bg-gray-50 py-10 md:py-16">
-        <Container maxWidth="lg">
+      {/* ================= SERVICE & PRICING TIERS SECTION ================= */}
+      {/* 
+        Pricing and service tiers section displaying 5 different service packages.
+        Features:
+        - Modern horizontal scrolling card layout with scroll snap
+        - Smooth scrolling with fade edge indicators
+        - Color-coded tiers (green, blue, purple, orange, red)
+        - Enhanced card hover effects and animations
+        - Detailed feature lists for each tier
+        - Pricing ranges and target audience information
+        - Responsive design with horizontal scroll on mobile
+      */}
+      <Box
+        sx={{
+          background: "linear-gradient(to bottom, #fff 0%, #fafafa 100%)",
+          py: { xs: 6, md: 10 },
+          position: "relative",
+          overflow: "hidden",
+        }}
+      >
+        <Container maxWidth="lg" sx={{ position: "relative" }}>
+          {/* Section heading */}
           <Typography
-            variant={isMobile ? "h4" : "h3"}
-            className="text-center font-poppins font-bold mb-8 md:mb-12"
+            variant="h4"
+            align="center"
             sx={{
-              fontSize: isMobile ? "1.5rem" : isTablet ? "2rem" : "2.5rem",
-              background: "linear-gradient(45deg, #1A1A2E 30%, #FF9900 90%)",
-              WebkitBackgroundClip: "text",
-              WebkitTextFillColor: "transparent",
+              fontWeight: 700,
+              mb: 2,
+              color: "#1A1A2E",
+              letterSpacing: "-0.01em",
             }}
           >
-            Learning Paths
+            LASTTE — Service & Pricing Tiers
           </Typography>
-          <Grid container spacing={4}>
-            {learningPaths.map((path, index) => (
-              <Grid item xs={12} md={4} key={path.title}>
-                <Card
-                  className="h-full transition-all duration-300 hover:translate-y-[-8px]"
-                  sx={{
-                    boxShadow: "0 4px 20px rgba(0,0,0,0.08)",
-                    "&:hover": {
-                      boxShadow: "0 8px 30px rgba(0,0,0,0.12)",
-                    },
-                    position: "relative",
-                    overflow: "hidden",
-                  }}
-                >
-                  <Box
-                    className={`absolute inset-0 opacity-5 bg-gradient-to-br ${path.gradient}`}
+
+          {/* Pricing disclaimer */}
+          <Typography
+            align="center"
+            sx={{ color: "text.secondary", mb: 6, fontSize: "1.1rem" }}
+          >
+            Pricing is indicative. Final cost depends on scope, complexity, and
+            timeline.
+          </Typography>
+
+          {/* Modern horizontal scrolling container with fade edges */}
+          <Box
+            sx={{
+              position: "relative",
+              width: "100%",
+              "&::before": {
+                content: '""',
+                position: "absolute",
+                left: 0,
+                top: 0,
+                bottom: 0,
+                width: "80px",
+                background:
+                  "linear-gradient(to right, rgba(250,250,250,1), rgba(250,250,250,0))",
+                zIndex: 2,
+                pointerEvents: "none",
+              },
+              "&::after": {
+                content: '""',
+                position: "absolute",
+                right: 0,
+                top: 0,
+                bottom: 0,
+                width: "80px",
+                background:
+                  "linear-gradient(to left, rgba(250,250,250,1), rgba(250,250,250,0))",
+                zIndex: 2,
+                pointerEvents: "none",
+              },
+            }}
+          >
+            {/* Scrollable container with modern styling */}
+            <Box
+              sx={{
+                overflowX: "auto",
+                overflowY: "hidden",
+                width: "100%",
+                pb: 3,
+                px: { xs: 2, md: 0 },
+                scrollBehavior: "smooth",
+                scrollSnapType: "x mandatory",
+                "&::-webkit-scrollbar": {
+                  height: "8px",
+                },
+                "&::-webkit-scrollbar-track": {
+                  background: "rgba(0,0,0,0.05)",
+                  borderRadius: "10px",
+                },
+                "&::-webkit-scrollbar-thumb": {
+                  background: "linear-gradient(90deg, #FF9900, #FFD580)",
+                  borderRadius: "10px",
+                  "&:hover": {
+                    background: "linear-gradient(90deg, #FF9900, #FF9900)",
+                  },
+                },
+                // Firefox scrollbar
+                scrollbarWidth: "thin",
+                scrollbarColor: "#FF9900 rgba(0,0,0,0.05)",
+              }}
+            >
+              <Box
+                sx={{
+                  display: "flex",
+                  gap: { xs: 3, md: 4 },
+                  pb: 2,
+                  px: { xs: 1, md: 2 },
+                  minWidth: "max-content",
+                }}
+              >
+                {/* Render pricing tier cards */}
+                {pricingTiers.map((tier) => (
+                  <PricingCard
+                    key={tier.tierNumber}
+                    tierNumber={tier.tierNumber}
+                    title={tier.title}
+                    price={tier.price}
+                    description={tier.description}
+                    features={tier.features}
+                    color={tier.color}
+                    colorDark={tier.colorDark}
+                    deliverables={tier.deliverables}
+                    bestFor={tier.bestFor}
+                    outcome={tier.outcome}
                   />
-                  <CardContent sx={{ p: 3, position: "relative" }}>
-                    <Box className="flex justify-center mb-4">{path.icon}</Box>
-                    <Typography
-                      variant="h6"
-                      align="center"
-                      sx={{
-                        fontSize: "1.2rem",
-                        fontWeight: 600,
-                        color: "#1A1A2E",
-                        mb: 2,
-                      }}
-                    >
-                      {path.title}
-                    </Typography>
-                    <Box className="flex justify-between mb-3">
-                      <Typography
-                        variant="body2"
-                        sx={{ color: "#FF9900", fontWeight: 500 }}
-                      >
-                        {path.duration}
-                      </Typography>
-                      <Typography
-                        variant="body2"
-                        sx={{ color: "text.secondary" }}
-                      >
-                        {path.modules} modules
-                      </Typography>
-                    </Box>
-                    <Typography
-                      variant="body2"
-                      sx={{
-                        color: "text.secondary",
-                        mb: 2,
-                        textAlign: "center",
-                        bgcolor: "rgba(255, 153, 0, 0.08)",
-                        py: 0.5,
-                        borderRadius: 1,
-                      }}
-                    >
-                      {path.level}
-                    </Typography>
-                    <Box className="flex flex-wrap gap-1 justify-center">
-                      {path.skills.map((skill) => (
-                        <Chip
-                          key={skill}
-                          label={skill}
-                          size="small"
-                          sx={{
-                            bgcolor: "rgba(255, 153, 0, 0.08)",
-                            color: "#1A1A2E",
-                            border: "1px solid rgba(255, 153, 0, 0.2)",
-                            "&:hover": {
-                              bgcolor: "rgba(255, 153, 0, 0.15)",
-                              transform: "scale(1.05)",
-                            },
-                            transition: "all 0.2s ease",
-                          }}
-                        />
-                      ))}
-                    </Box>
-                  </CardContent>
-                </Card>
-              </Grid>
-            ))}
-          </Grid>
+                ))}
+              </Box>
+            </Box>
+          </Box>
         </Container>
       </Box>
     </Box>

@@ -28,7 +28,7 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  @apply bg-white text-questdea-navy;
+  @apply bg-white text-lastte-navy;
 }
 
 code {
@@ -41,11 +41,11 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .btn-primary {
-  @apply bg-questdea-orange text-white px-4 py-2 rounded-md hover:bg-opacity-90 transition-all;
+  @apply bg-lastte-orange text-white px-4 py-2 rounded-md hover:bg-opacity-90 transition-all;
 }
 
 .btn-secondary {
-  @apply bg-questdea-navy text-white px-4 py-2 rounded-md hover:bg-opacity-90 transition-all;
+  @apply bg-lastte-navy text-white px-4 py-2 rounded-md hover:bg-opacity-90 transition-all;
 }
 
 .card {

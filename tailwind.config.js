@@ -6,9 +6,9 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        'questdea-orange': '#FFA500',
-        'questdea-navy': '#1A1A2E',
-        'questdea-gray': '#6B7280',
+        'lastte-orange': '#FFA500',
+        'lastte-navy': '#1A1A2E',
+        'lastte-gray': '#6B7280',
       },
       fontFamily: {
         'poppins': ['Poppins', 'sans-serif'],

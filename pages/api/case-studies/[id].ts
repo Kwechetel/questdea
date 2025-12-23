@@ -1,0 +1,173 @@
+import { NextApiRequest, NextApiResponse } from "next";
+import { getServerSession } from "next-auth";
+import { authOptions } from "../auth/[...nextauth]";
+import { prisma } from "@/lib/prisma";
+import { Role } from "@prisma/client";
+import { z } from "zod";
+
+// Validation schema for case study update
+const updateCaseStudySchema = z.object({
+  title: z.string().min(1).max(200).optional(),
+  slug: z
+    .string()
+    .min(1)
+    .max(200)
+    .regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/, "Slug must be lowercase with hyphens")
+    .optional(),
+  summary: z.string().min(1).max(500).optional(),
+  stack: z.string().min(1).max(200).optional(),
+  coverImageUrl: z.string().url().optional().nullable(),
+  body: z.string().min(1).optional(),
+  published: z.boolean().optional(),
+});
+
+// Helper function to verify admin access
+async function verifyAdmin(req: NextApiRequest, res: NextApiResponse) {
+  const session = await getServerSession(req, res, authOptions);
+
+  if (!session) {
+    res.status(401).json({ message: "Unauthorized" });
+    return null;
+  }
+
+  if (session.user.role !== Role.ADMIN) {
+    res.status(403).json({ message: "Forbidden - Admin access required" });
+    return null;
+  }
+
+  return session;
+}
+
+export default async function handler(
+  req: NextApiRequest,
+  res: NextApiResponse
+) {
+  const { id } = req.query;
+
+  if (!id || typeof id !== "string") {
+    return res.status(400).json({ message: "Invalid case study ID" });
+  }
+
+  // GET /api/case-studies/[id] - Get single case study
+  if (req.method === "GET") {
+    try {
+      const caseStudy = await prisma.caseStudy.findUnique({
+        where: { id },
+      });
+
+      if (!caseStudy) {
+        return res.status(404).json({ message: "Case study not found" });
+      }
+
+      // Check if published or admin
+      const session = await getServerSession(req, res, authOptions);
+      const isAdmin = session?.user?.role === Role.ADMIN;
+
+      if (!caseStudy.published && !isAdmin) {
+        return res.status(404).json({ message: "Case study not found" });
+      }
+
+      return res.status(200).json(caseStudy);
+    } catch (error) {
+      console.error("Error fetching case study:", error);
+      return res.status(500).json({ message: "Internal server error" });
+    }
+  }
+
+  // PATCH /api/case-studies/[id] - Update case study (admin only)
+  if (req.method === "PATCH") {
+    const session = await verifyAdmin(req, res);
+    if (!session) return;
+
+    try {
+      const validationResult = updateCaseStudySchema.safeParse(req.body);
+
+      if (!validationResult.success) {
+        return res.status(400).json({
+          message: "Validation failed",
+          errors: validationResult.error.errors,
+        });
+      }
+
+      const data = validationResult.data;
+
+      // Check if slug is being updated and if it conflicts
+      if (data.slug) {
+        const existing = await prisma.caseStudy.findUnique({
+          where: { slug: data.slug },
+        });
+
+        if (existing && existing.id !== id) {
+          return res.status(400).json({
+            message: "A case study with this slug already exists",
+          });
+        }
+      }
+
+      const caseStudy = await prisma.caseStudy.update({
+        where: { id },
+        data: {
+          ...(data.title && { title: data.title }),
+          ...(data.slug && { slug: data.slug }),
+          ...(data.summary && { summary: data.summary }),
+          ...(data.stack && { stack: data.stack }),
+          ...(data.coverImageUrl !== undefined && {
+            coverImageUrl: data.coverImageUrl,
+          }),
+          ...(data.body && { body: data.body }),
+          ...(data.published !== undefined && { published: data.published }),
+        },
+      });
+
+      return res.status(200).json({
+        message: "Case study updated successfully",
+        caseStudy,
+      });
+    } catch (error: any) {
+      console.error("Error updating case study:", error);
+
+      if (error.code === "P2025") {
+        return res.status(404).json({ message: "Case study not found" });
+      }
+
+      if (error.code === "P2002") {
+        return res.status(400).json({
+          message: "A case study with this slug already exists",
+        });
+      }
+
+      return res.status(500).json({
+        message: "Internal server error",
+      });
+    }
+  }
+
+  // DELETE /api/case-studies/[id] - Delete case study (admin only)
+  if (req.method === "DELETE") {
+    const session = await verifyAdmin(req, res);
+    if (!session) return;
+
+    try {
+      await prisma.caseStudy.delete({
+        where: { id },
+      });
+
+      return res.status(200).json({
+        message: "Case study deleted successfully",
+      });
+    } catch (error: any) {
+      console.error("Error deleting case study:", error);
+
+      if (error.code === "P2025") {
+        return res.status(404).json({ message: "Case study not found" });
+      }
+
+      return res.status(500).json({
+        message: "Internal server error",
+      });
+    }
+  }
+
+  return res.status(405).json({ message: "Method not allowed" });
+}
+

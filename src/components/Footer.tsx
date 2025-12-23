@@ -1,19 +1,22 @@
-import React from "react";
+"use client";
+
+import React, { useState, useEffect, useTransition } from "react";
+import { useSession } from "next-auth/react";
 import {
   Box,
   Container,
   Typography,
   IconButton,
+  Button,
   useTheme,
   useMediaQuery,
   SvgIcon,
   SvgIconProps,
+  Grid,
 } from "@mui/material";
-import FacebookIcon from "@mui/icons-material/Facebook";
 import LinkedInIcon from "@mui/icons-material/LinkedIn";
-import InstagramIcon from "@mui/icons-material/Instagram";
 import logo from "../assets/logo.png";
-import { Link as RouterLink } from "react-router-dom";
+import Link from "next/link";
 
 // Custom X (Twitter) icon component
 const XIcon = (props: SvgIconProps) => (
@@ -26,181 +29,314 @@ const Footer = () => {
   const currentYear = new Date().getFullYear();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+  const { data: session } = useSession();
+  const [isMounted, setIsMounted] = useState(false);
+  const [isPending, startTransition] = useTransition();
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
+  // Only use session data after mount to prevent hydration mismatches
+  const isAuthenticated = isMounted && !!session;
 
   return (
     <Box
       component="footer"
-      className="bg-questdea-navy text-white py-6 md:py-8"
+      sx={{
+        background: "linear-gradient(180deg, #050816 0%, #1A1A2E 100%)",
+        color: "#fff",
+        py: { xs: 6, md: 8 },
+        position: "relative",
+        borderTop: "1px solid rgba(255,255,255,0.06)",
+      }}
     >
       <Container maxWidth="lg">
-        <Box className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 md:gap-8">
+        <Grid container spacing={{ xs: 4, md: 6 }}>
           {/* Brand Section */}
-          <Box>
-            <Typography
-              variant="h6"
-              className="font-poppins font-bold mb-3 md:mb-4"
-              sx={{ fontSize: isMobile ? "1.1rem" : "1.25rem" }}
-            >
-              QuestDea
-            </Typography>
+          <Grid item xs={12} md={6}>
+            <Box sx={{ display: "flex", alignItems: "center", mb: 3 }}>
+              <img
+                src={
+                  typeof logo === "string"
+                    ? logo
+                    : (logo as any)?.src || String(logo)
+                }
+                alt="LASTTE Logo"
+                style={{
+                  height: isMobile ? 36 : 44,
+                  marginRight: 12,
+                }}
+              />
+              <Typography
+                variant="h6"
+                sx={{
+                  color: "#fff",
+                  fontWeight: 700,
+                  fontSize: isMobile ? 18 : 20,
+                  letterSpacing: "0.12em",
+                  textTransform: "uppercase",
+                }}
+              >
+                LASTTE
+              </Typography>
+            </Box>
             <Typography
               variant="body2"
-              className="mb-3 md:mb-4"
-              sx={{ fontSize: isMobile ? "0.85rem" : "0.875rem" }}
+              sx={{
+                color: "rgba(255,255,255,0.7)",
+                fontSize: isMobile ? "0.875rem" : "0.95rem",
+                lineHeight: 1.6,
+                mb: 3,
+                maxWidth: "500px",
+              }}
             >
-              Fueling the Journey of Minds, One Idea at a Time.
+              Helping you design, build, and scale digital products and
+              platforms with clarity, reliability, and purpose.
             </Typography>
-            <Box className="flex space-x-2">
+            {/* Social Links */}
+            <Box sx={{ display: "flex", gap: 1 }}>
               <IconButton
-                color="inherit"
-                aria-label="Facebook"
-                component="a"
-                href="https://facebook.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                size={isMobile ? "small" : "medium"}
-              >
-                <FacebookIcon fontSize={isMobile ? "small" : "medium"} />
-              </IconButton>
-              <IconButton
-                color="inherit"
-                aria-label="X (Twitter)"
                 component="a"
                 href="https://x.com"
                 target="_blank"
                 rel="noopener noreferrer"
-                size={isMobile ? "small" : "medium"}
+                sx={{
+                  color: "rgba(255,255,255,0.7)",
+                  border: "1px solid rgba(255,255,255,0.1)",
+                  "&:hover": {
+                    color: "#FFD580",
+                    borderColor: "#FFD580",
+                    backgroundColor: "rgba(255,213,128,0.1)",
+                  },
+                  transition: "all 0.3s ease",
+                }}
+                size="small"
               >
-                <XIcon fontSize={isMobile ? "small" : "medium"} />
+                <XIcon fontSize="small" />
               </IconButton>
               <IconButton
-                color="inherit"
-                aria-label="LinkedIn"
                 component="a"
                 href="https://linkedin.com"
                 target="_blank"
                 rel="noopener noreferrer"
-                size={isMobile ? "small" : "medium"}
+                sx={{
+                  color: "rgba(255,255,255,0.7)",
+                  border: "1px solid rgba(255,255,255,0.1)",
+                  "&:hover": {
+                    color: "#FFD580",
+                    borderColor: "#FFD580",
+                    backgroundColor: "rgba(255,213,128,0.1)",
+                  },
+                  transition: "all 0.3s ease",
+                }}
+                size="small"
               >
-                <LinkedInIcon fontSize={isMobile ? "small" : "medium"} />
-              </IconButton>
-              <IconButton
-                color="inherit"
-                aria-label="Instagram"
-                component="a"
-                href="https://instagram.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                size={isMobile ? "small" : "medium"}
-              >
-                <InstagramIcon fontSize={isMobile ? "small" : "medium"} />
+                <LinkedInIcon fontSize="small" />
               </IconButton>
             </Box>
-          </Box>
+          </Grid>
 
-          {/* Quick Links */}
-          <Box>
+          {/* Links Section */}
+          <Grid item xs={12} sm={6} md={3}>
             <Typography
               variant="h6"
-              className="font-poppins font-bold mb-3 md:mb-4"
-              sx={{ fontSize: isMobile ? "1.1rem" : "1.25rem" }}
+              sx={{
+                color: "#FFD580",
+                fontWeight: 700,
+                fontSize: isMobile ? "0.95rem" : "1rem",
+                mb: 2,
+                letterSpacing: "0.05em",
+                textTransform: "uppercase",
+              }}
             >
-              Quick Links
+              Links
             </Typography>
-            <Box className="flex flex-col space-y-2">
-              <RouterLink
-                to="/"
-                className="text-white hover:text-questdea-orange transition-colors"
+            <Box sx={{ display: "flex", flexDirection: "column", gap: 1.5 }}>
+              <Link
+                href="/"
                 style={{
                   textDecoration: "none",
-                  fontSize: isMobile ? "0.85rem" : "0.875rem",
+                  color: "rgba(255,255,255,0.7)",
+                  fontSize: isMobile ? "0.875rem" : "0.9rem",
+                  transition: "color 0.3s ease",
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.color = "#FFD580";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.color = "rgba(255,255,255,0.7)";
                 }}
               >
                 Home
-              </RouterLink>
-              <RouterLink
-                to="/knowledge-hub"
-                className="text-white hover:text-questdea-orange transition-colors"
+              </Link>
+              <Link
+                href="/work"
                 style={{
                   textDecoration: "none",
-                  fontSize: isMobile ? "0.85rem" : "0.875rem",
+                  color: "rgba(255,255,255,0.7)",
+                  fontSize: isMobile ? "0.875rem" : "0.9rem",
+                  transition: "color 0.3s ease",
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.color = "#FFD580";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.color = "rgba(255,255,255,0.7)";
                 }}
               >
-                Knowledge Hub
-              </RouterLink>
-              <RouterLink
-                to="/about"
-                className="text-white hover:text-questdea-orange transition-colors"
+                Portfolio
+              </Link>
+              <Link
+                href="/insights"
                 style={{
                   textDecoration: "none",
-                  fontSize: isMobile ? "0.85rem" : "0.875rem",
+                  color: "rgba(255,255,255,0.7)",
+                  fontSize: isMobile ? "0.875rem" : "0.9rem",
+                  transition: "color 0.3s ease",
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.color = "#FFD580";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.color = "rgba(255,255,255,0.7)";
+                }}
+              >
+                Insights
+              </Link>
+              <Link
+                href="/about"
+                style={{
+                  textDecoration: "none",
+                  color: "rgba(255,255,255,0.7)",
+                  fontSize: isMobile ? "0.875rem" : "0.9rem",
+                  transition: "color 0.3s ease",
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.color = "#FFD580";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.color = "rgba(255,255,255,0.7)";
                 }}
               >
                 About
-              </RouterLink>
-              <RouterLink
-                to="/login"
-                className="text-white hover:text-questdea-orange transition-colors"
+              </Link>
+              <Link
+                href="/contact"
                 style={{
                   textDecoration: "none",
-                  fontSize: isMobile ? "0.85rem" : "0.875rem",
+                  color: "rgba(255,255,255,0.7)",
+                  fontSize: isMobile ? "0.875rem" : "0.9rem",
+                  transition: "color 0.3s ease",
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.color = "#FFD580";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.color = "rgba(255,255,255,0.7)";
                 }}
               >
-                Login
-              </RouterLink>
+                Contact
+              </Link>
+              {!isAuthenticated && (
+                <Button
+                  component={Link}
+                  href="/admin-access"
+                  variant="text"
+                  size="small"
+                  sx={{
+                    color: "rgba(255,255,255,0.5)",
+                    fontSize: isMobile ? "0.75rem" : "0.8rem",
+                    textTransform: "none",
+                    padding: "4px 8px",
+                    minWidth: "auto",
+                    opacity: 0.6,
+                    "&:hover": {
+                      color: "rgba(255,255,255,0.7)",
+                      backgroundColor: "rgba(255,255,255,0.05)",
+                      opacity: 0.8,
+                    },
+                  }}
+                >
+                  Admin
+                </Button>
+              )}
             </Box>
-          </Box>
+          </Grid>
 
-          {/* Contact Info */}
-          <Box>
+          {/* Contact Section */}
+          <Grid item xs={12} sm={6} md={3}>
             <Typography
               variant="h6"
-              className="font-poppins font-bold mb-3 md:mb-4"
-              sx={{ fontSize: isMobile ? "1.1rem" : "1.25rem" }}
-            >
-              Contact Us
-            </Typography>
-            <Typography
-              variant="body2"
-              className="mb-2"
-              sx={{ fontSize: isMobile ? "0.85rem" : "0.875rem" }}
-            >
-              Email: info@questdea.com
-            </Typography>
-            <Typography
-              variant="body2"
-              sx={{ fontSize: isMobile ? "0.85rem" : "0.875rem" }}
-            >
-              Address: 123 Innovation Street, Tech City, TC 12345
-            </Typography>
-          </Box>
-        </Box>
-
-        {/* Copyright */}
-        <Box className="border-t border-gray-700 mt-6 md:mt-8 pt-6 md:pt-8 text-left">
-          <Box
-            display="flex"
-            alignItems="center"
-            justifyContent="flex-start"
-            flexDirection={isMobile ? "column" : "row"}
-          >
-            <img
-              src={logo}
-              alt="QuestDea Logo"
-              style={{
-                height: isMobile ? 24 : 32,
-                marginRight: isMobile ? 0 : 12,
-                marginBottom: isMobile ? 8 : 0,
+              sx={{
+                color: "#FFD580",
+                fontWeight: 700,
+                fontSize: isMobile ? "0.95rem" : "1rem",
+                mb: 2,
+                letterSpacing: "0.05em",
+                textTransform: "uppercase",
               }}
-            />
-            <Typography
-              variant="body2"
-              color="text.secondary"
-              sx={{ fontSize: isMobile ? "0.75rem" : "0.875rem" }}
             >
-              © {currentYear} QuestDea. All rights reserved.
+              Contact
             </Typography>
-          </Box>
+            <Box sx={{ display: "flex", flexDirection: "column", gap: 1.5 }}>
+              <Typography
+                variant="body2"
+                sx={{
+                  color: "rgba(255,255,255,0.7)",
+                  fontSize: isMobile ? "0.875rem" : "0.9rem",
+                }}
+              >
+                <Box
+                  component="a"
+                  href="mailto:info@lastte.com"
+                  sx={{
+                    color: "inherit",
+                    textDecoration: "none",
+                    "&:hover": {
+                      color: "#FFD580",
+                    },
+                    transition: "color 0.3s ease",
+                  }}
+                >
+                  hello@lastte.com
+                </Box>
+              </Typography>
+            </Box>
+          </Grid>
+        </Grid>
+
+        {/* Copyright Section */}
+        <Box
+          sx={{
+            borderTop: "1px solid rgba(255,255,255,0.08)",
+            mt: { xs: 5, md: 6 },
+            pt: { xs: 4, md: 5 },
+            display: "flex",
+            flexDirection: { xs: "column", sm: "row" },
+            alignItems: { xs: "flex-start", sm: "center" },
+            justifyContent: "space-between",
+            gap: 2,
+          }}
+        >
+          <Typography
+            variant="body2"
+            sx={{
+              color: "rgba(255,255,255,0.5)",
+              fontSize: isMobile ? "0.75rem" : "0.875rem",
+            }}
+          >
+            © {currentYear} LASTTE. All rights reserved.
+          </Typography>
+          <Typography
+            variant="body2"
+            sx={{
+              color: "rgba(255,255,255,0.5)",
+              fontSize: isMobile ? "0.75rem" : "0.875rem",
+            }}
+          >
+            Built with clarity, reliability, and purpose.
+          </Typography>
         </Box>
       </Container>
     </Box>

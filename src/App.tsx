@@ -17,10 +17,10 @@ const theme = createTheme({
   palette: {
     mode: "light",
     primary: {
-      main: "#FFA500", // QuestDea Orange
+      main: "#FFA500", // LASTTE Orange
     },
     secondary: {
-      main: "#1A1A2E", // QuestDea Navy
+      main: "#1A1A2E", // LASTTE Navy
     },
     text: {
       primary: "#1A1A2E",

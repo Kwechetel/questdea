@@ -1,0 +1,12 @@
+{
+  "/_app": "pages/_app.js",
+  "/_error": "pages/_error.js",
+  "/_document": "pages/_document.js",
+  "/admin-access": "pages/admin-access.js",
+  "/admin": "pages/admin.js",
+  "/admin/whatsapp-chat": "pages/admin/whatsapp-chat.js",
+  "/api/whatsapp/conversations": "pages/api/whatsapp/conversations.js",
+  "/api/whatsapp/conversations/[phone]": "pages/api/whatsapp/conversations/[phone].js",
+  "/api/whatsapp/messages": "pages/api/whatsapp/messages.js",
+  "/api/auth/[...nextauth]": "pages/api/auth/[...nextauth].js"
+}
